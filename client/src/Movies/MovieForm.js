@@ -1,97 +1,103 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"
-
+import axios from "axios";
 
 const initalState = {
   title: "",
   director: "",
   metascore: "",
-  stars: [""],
-  id: Date.now()
+  stars: [],
 };
 
 
 function MovieForm(props) {
   const [m, setM] = useState(initalState);
-  const [theMovies, setTheMovies] = useState([])
-  console.log("themovies", theMovies)
-    console.log("movieform props", props)
+  console.log("movieform props", props);
 
-  const handleChange = (e) => {
-      e.persist()
+  const handleChange = e => {
     setM({
-        ...m,
-        [e.target.name]: e.target.value
-    })
+      ...m,
+      [e.target.name]: e.target.value
+    });
   };
 
   useEffect(() => {
-      axios.get("http://localhost:5000/api/movies")
-      .then(res => {
-          console.log("movie form get", res)
-      })
-      .catch(err => console.log(err))
-  })
+    axios
+      .get(`http://localhost:5000/api/movies/${props.match.params.id}`)
+      .then(res => setM(res.data))
+      .catch(err => console.log(err.response));
+  }, []);
+  
 
-  useEffect(() => {
-    console.log(props, "alskdfjlsdk")
-}, [props])
-
-  useEffect(() => {
-      if (props.movies){
-        const editItem = props.movies.find(e => e.id === props.match.params.id)
-    //   const editItem = props.movies?.find(e => e.id === props.match.params.id)
-      if(editItem){
-          setM(editItem)
-      }
-    }
-  }, [props.movies, props.match.params.id])
+  // useEffect(() => {
+  //     const itemToEdit = props.movies.find(e => e.id === props.match.params.id)
+  //     if(itemToEdit) setM(itemToEdit)
+  //     console.log(itemToEdit, "err")
+  // }, [props.movies, props.match.params.id])
 
   const submit = e => {
-      e.preventDefault()
-      axios.put(`http://localhost:5000/api/movies/${m.id}`, m)
+    e.preventDefault();
+    axios
+      .put(`http://localhost:5000/api/movies/${m.id}`, m)
       .then(res => {
-          console.log("put res.data", res.data)
-          console.log("props movies", props.movies)
-          props.setter([...props.movies, m])
+        console.log("put res.data", res.data);
+        props.setMovies([...props.movies, m])
+        props.history.push("/");
       })
-      .catch(err => console.log(err))
-      props.history.push("/")
+      .catch(err => console.log(err));
+  };
+
+  function stars(eventVal, idx){
+    const star = m.stars.map((star,i) => i === idx ? eventVal : star)
+    setM({ ...m, stars: star })
   }
 
   return (
-    <div >
-      <form onSubmit = {submit} className = "form">
-      <h1>Edit Movie!</h1>
+    <div>
+      <form onSubmit={submit} className="form">
+        <h1>Edit Movie!</h1>
+        <label>
+          label
         <input
           type="text"
           name="title"
           value={m.title}
           onChange={handleChange}
-          placeholder = "title"
+          placeholder="title"
         />
+        </label>
         <input
           type="text"
           name="director"
           value={m.director}
           onChange={handleChange}
-          placeholder = "director"
+          placeholder="director"
         />
         <input
           type="text"
           name="metascore"
           value={m.metascore}
           onChange={handleChange}
-          placeholder = "metascore"
+          placeholder="metascore"
         />
-        <input
-          type="text"
-          name="stars"
-          value={m.stars}
-          onChange={handleChange}
-          placeholder = "stars"
-        />
-        <button type = "submit">Edit Movie</button>
+        {m.stars.map((star, i) => {
+          return (
+            <input
+            type="text"
+            name="stars"
+            value={star}
+            onChange={e => stars(e.target.value, i)}
+            placeholder="stars"
+          />
+          )
+        })}
+                  {/* <input
+            type="text"
+            name="stars"
+            value={m.stars}
+            onChange={handleChange}
+            placeholder="stars"
+          /> */}
+        <button type="submit">Edit Movie</button>
       </form>
     </div>
   );
