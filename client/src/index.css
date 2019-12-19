@@ -55,8 +55,8 @@ body {
 }
 .save-button {
   position: absolute;
-  top: 25px;
-  right: 25px;
+  bottom: 0px;
+  right: 0px;
   border: 1px solid grey;
   padding: 5px 10px;
   background-color: lightseagreen;
@@ -74,4 +74,34 @@ body {
 .movie-warning {
   color: red;
   text-align: center;
+}
+.edit-button {
+  position: absolute;
+  bottom: 0px;
+  right: 58px;
+  border: 1px solid grey;
+  padding: 5px 10px;
+  background-color: lightseagreen;
+}
+.delete-button {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  border: 1px solid grey;
+  padding: 5px 10px;
+  background-color: lightcoral;
+}
+.form{
+  display:flex;
+  flex-direction: column;
+  width:50%;
+  margin: 0 auto;
+}
+
+.form button{
+  width:30%;
+  margin: 0 auto;
+}
+.form h1{
+  margin: 0 auto;
 }
